@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure URL Shortener</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <h1>Secure URL Shortener</h1>
+    <p class="subtitle">Enter your long URL to shorten it.</p>
+
+    <!-- Shortener Form -->
+    <form id="shortener-form">
+      <input 
+        type="url" 
+        id="long-url" 
+        placeholder="https://example.com/my-long-url" 
+        required
+      >
+      <button type="submit" id="shorten-btn" class="btn-primary">Shorten URL</button>
+    </form>
+
+    <!-- Error message banner (hidden by default) -->
+    <div id="error-box" class="error-box hidden"></div>
+
+    <!-- Generated Short URL Display (hidden initially, shown on submit) -->
+    <div id="result-box" class="result-area hidden">
+      <p class="result-label">Generated Short URL:</p>
+      <div class="result-row">
+        <span id="short-url-text"></span>
+        <button type="button" id="copy-btn" class="btn-small">
+          <span id="copy-icon"></span>
+          <span id="copy-text">Copy</span>
+        </button>
+      </div>
+      <!-- Security Status Feedback -->
+      <div id="security-status-box" class="security-status-badge"></div>
+    </div>
+
+    <!-- Recent Links Section -->
+    <h2>Recent Links</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Original URL</th>
+            <th>Short URL</th>
+            <th>Security Status</th>
+            <th>Clicks</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="links-table-body">
+          <!-- Populated from backend via script.js -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

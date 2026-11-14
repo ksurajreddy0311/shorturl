@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Report - Secure URL Shortener with Threat Detection</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 15mm 20mm 15mm;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #1e293b;
+      line-height: 1.5;
+      font-size: 11pt;
+      margin: 0;
+      padding: 0;
+    }
+    .header-box {
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .print-bar {
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-save-pdf {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      font-size: 11pt;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-save-pdf:hover {
+      background-color: #1d4ed8;
+    }
+    @media print {
+      .print-bar {
+        display: none !important;
+      }
+    }
+    .project-title {
+      font-size: 22pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 4px 0;
+    }
+    .project-subtitle {
+      font-size: 12pt;
+      color: #2563eb;
+      font-weight: 600;
+      margin: 0 0 6px 0;
+    }
+    .meta-info {
+      font-size: 9pt;
+      color: #64748b;
+    }
+    h2 {
+      font-size: 13pt;
+      color: #0f172a;
+      border-left: 4px solid #2563eb;
+      padding-left: 8px;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 11pt;
+      color: #1e293b;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      page-break-after: avoid;
+    }
+    p {
+      margin: 0 0 8px 0;
+      text-align: justify;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px 0;
+      font-size: 9.5pt;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 600;
+    }
+    .function-name {
+      font-family: Consolas, monospace;
+      font-weight: 600;
+      color: #2563eb;
+    }
+    .quote-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #3b82f6;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-style: italic;
+      color: #334155;
+      font-size: 10pt;
+    }
+    ul {
+      margin: 0 0 8px 0;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 3px;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 8pt;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Print to PDF Bar (Visible on screen, hidden on print/PDF) -->
+  <div class="print-bar">
+    <div>
+      <strong style="color: #1e3a8a;">📄 Project Report Ready</strong>
+      <span style="color: #475569; font-size: 9.5pt; margin-left: 8px;">Click to save or print as PDF</span>
+    </div>
+    <button class="btn-save-pdf" onclick="window.print()">📥 Download as PDF</button>
+  </div>
+
+  <!-- Header -->
+  <div class="header-box">
+    <div class="project-title">Secure URL Shortener with Threat Detection</div>
+    <div class="project-subtitle">Full-Stack Academic Project Report & Technical Reference</div>
+    <div class="meta-info">Domain: Web Development, Cybersecurity & Cloud Computing &bull; Stack: HTML, CSS, JavaScript, Python (Flask), Google Cloud Firestore Ready</div>
+  </div>
+
+  <!-- Abstract -->
+  <h2>1. Executive Summary & Problem Statement</h2>
+  <p>
+    Uniform Resource Locator (URL) shorteners are widely utilized to transform lengthy web addresses into compact, shareable tokens. However, conventional public shorteners blindly redirect users without destination verification, making them frequent vectors for cyber attacks, specifically <strong>phishing campaigns, credential harvesting, and malware delivery</strong>.
+  </p>
+  <p>
+    This project introduces a <strong>security-oriented URL shortener</strong>. In addition to core URL shortening and analytics, the system incorporates an integrated <strong>threat detection engine</strong> that automatically analyzes destination URLs for deceptive heuristics, validates transport protocols, and halts suspicious redirects with an intermediate security advisory page.
+  </p>
+
+  <!-- Architecture Table -->
+  <h2>2. System Architecture & File Structure</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 20%;">File Name</th>
+        <th style="width: 25%;">Technology</th>
+        <th style="width: 55%;">Responsibility</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>index.html</code></td>
+        <td>HTML5 Semantic</td>
+        <td>Provides user interface: URL input form, generated link display, security status badges, and recent links table.</td>
+      </tr>
+      <tr>
+        <td><code>style.css</code></td>
+        <td>CSS3 Responsive</td>
+        <td>Clean, accessible styling with centered layout, light theme, accessible color contrasts, and mobile responsiveness.</td>
+      </tr>
+      <tr>
+        <td><code>script.js</code></td>
+        <td>Vanilla JavaScript (ES6)</td>
+        <td>Client-side logic: asynchronous HTTP <code>fetch()</code> communication, dynamic table DOM manipulation, and clipboard utilities.</td>
+      </tr>
+      <tr>
+        <td><code>app.py</code></td>
+        <td>Python 3 (Flask)</td>
+        <td>Backend microservice: URL validation, cryptographic randomness code generation, security heuristic scanning, and HTTP 302 redirects.</td>
+      </tr>
+      <tr>
+        <td><code>test_app.py</code></td>
+        <td>Python <code>unittest</code></td>
+        <td>Automated testing suite executing 7 unit tests covering valid/invalid URL parsing, phishing checks, and click count increments.</td>
+      </tr>
+      <tr>
+        <td><code>start_server.bat</code></td>
+        <td>Windows Batch Script</td>
+        <td>Single-click automated local launcher executing the Flask development server on port 8080.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Backend Functions -->
+  <h2>3. Backend Function Specifications (`app.py`)</h2>
+  
+  <p><span class="function-name">is_valid_url(url: str) -&gt; bool</span></p>
+  <p>Performs input validation and sanitization using <code>urllib.parse</code>. Strictly enforces <code>http://</code> or <code>https://</code> schemes, rejecting hazardous URI schemes such as <code>javascript:</code> (Cross-Site Scripting) or <code>file:</code>.</p>
+
+  <p><span class="function-name">inspect_url_security(url: str) -&gt; (bool, str)</span></p>
+  <p>The core cybersecurity module. Evaluates destination URLs against four heuristic rules:
+    <ul>
+      <li><strong>Raw IP Hosts:</strong> Uses regular expressions (<code>IPV4_REGEX</code>) to flag direct IP address hosting commonly used in malicious servers.</li>
+      <li><strong>Phishing Keywords:</strong> Scans against suspicious patterns including <code>claim-reward</code>, <code>free-crypto</code>, and <code>banking-login</code>.</li>
+      <li><strong>Suspicious TLDs:</strong> Evaluates domain endings against high-risk top-level domains frequently abused in spam campaigns (e.g. <code>.tk</code>, <code>.xyz</code>, <code>.buzz</code>).</li>
+      <li><strong>Obfuscation:</strong> Detects the presence of <code>@</code> symbols in network locations used to obscure true destinations.</li>
+    </ul>
+  </p>
+
+  <p><span class="function-name">generate_short_code(length: int = 6) -&gt; str</span></p>
+  <p>Generates unique alphanumeric tokens (using <code>string.ascii_letters + string.digits</code>) and verifies uniqueness against the database to guarantee collision resistance.</p>
+
+  <p><span class="function-name">shorten_url() &bull; POST /api/shorten</span></p>
+  <p>REST API receiving JSON payloads, invoking validation and security scans, persisting link metadata, and returning short URL responses.</p>
+
+  <p><span class="function-name">redirect_to_url(short_code) &bull; GET /r/&lt;short_code&gt;</span></p>
+  <p>Handles link redirection. Atomically increments the click counter. For safe links, performs an immediate HTTP 302 redirect. For flagged links, halts navigation and renders an intermediate Safety Advisory page.</p>
+
+  <!-- Page Break for Clean Printing -->
+  <div class="page-break"></div>
+
+  <!-- Role of Cloud Computing -->
+  <h2>4. Cloud Computing Integration</h2>
+  <p>
+    Cloud computing transforms this local application into a globally available, enterprise-grade web service. It fulfills three primary responsibilities:
+  </p>
+  <ul>
+    <li>
+      <strong>Cloud Hosting / Compute (Vercel / Google Cloud Run):</strong>
+      Provides 24/7 serverless execution environments. The application is hosted on globally distributed container infrastructure, guaranteeing continuous uptime without relying on personal hardware.
+    </li>
+    <li>
+      <strong>Cloud Database (Google Cloud Firestore):</strong>
+      Replaces volatile in-memory storage (RAM) with a scalable, multi-region NoSQL document store. Persists link mappings, security flags, and real-time click metrics with automated backup and low-latency global replication.
+    </li>
+    <li>
+      <strong>Traffic Elasticity & Auto-Scaling:</strong>
+      Dynamically allocates computing resources during peak traffic surges and scales down to zero when idle, ensuring maximum cost-efficiency and resilience against traffic spikes.
+    </li>
+  </ul>
+
+  <!-- Role of Cybersecurity -->
+  <h2>5. Cybersecurity Strategy & Threat Mitigation</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Threat / Attack Vector</th>
+        <th>Risk Level</th>
+        <th>Mitigation Mechanism</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Script Injection / XSS</strong></td>
+        <td>High</td>
+        <td>Strict scheme whitelist allows only <code>http</code>/<code>https</code>; strips <code>javascript:</code>, <code>data:</code> payloads.</td>
+      </tr>
+      <tr>
+        <td><strong>Phishing Camouflage</strong></td>
+        <td>Critical</td>
+        <td>Keyword heuristics and suspicious TLD detection flag malicious targets prior to link distribution.</td>
+      </tr>
+      <tr>
+        <td><strong>Blind Redirection</strong></td>
+        <td>High</td>
+        <td>Suspicious destinations trigger an intermediate caution gate showing destination details before user consent.</td>
+      </tr>
+      <tr>
+        <td><strong>Token Collision</strong></td>
+        <td>Medium</td>
+        <td>Collision-resistant pseudo-random generation with active key validation loop.</td>
+      </tr>
+      <tr>
+        <td><strong>Eavesdropping / MITM</strong></td>
+        <td>Medium</td>
+        <td>Enforced HTTPS encryption across all client-to-server and cloud API communication channels.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Viva & Presentation Guide -->
+  <h2>6. Viva / Defense Q&A Quick Reference</h2>
+  
+  <div class="quote-box">
+    <strong>Q: Why does the system flag links rather than blocking them outright?</strong><br>
+    <em>A: Heuristic detection can encounter false positives. Following industry standards (e.g. Google Safe Browsing), the system flags potential risks and serves an interstitial advisory screen, informing the user while allowing informed manual progression.</em>
+  </div>
+
+  <div class="quote-box">
+    <strong>Q: Where is cybersecurity enforced: client-side or server-side?</strong><br>
+    <em>A: Exclusively server-side in <code>app.py</code>. Client-side validation can easily be bypassed by intercepting or replaying HTTP requests. Enforcing validation in the Python backend guarantees zero-trust input handling.</em>
+  </div>
+
+  <div class="quote-box">
+    <strong>Q: What is the benefit of Firestore over relational databases (like MySQL) for this project?</strong><br>
+    <em>A: Firestore provides serverless scaling, document-level read/write optimization for short-code lookups, native JSON integration with Flask, and eliminates traditional database administration and connection-pooling overhead.</em>
+  </div>
+
+  <!-- Summary Conclusion -->
+  <h2>7. Conclusion</h2>
+  <p>
+    The Secure URL Shortener successfully demonstrates full-stack software development principles, seamless asynchronous frontend-backend integration, proactive defensive cybersecurity mechanisms, and a cloud-native architecture ready for serverless production deployment.
+  </p>
+
+</body>
+</html>

@@ -1,0 +1,258 @@
+/* =========================================================
+   Simple College Student Project - Plain & Clean Style
+   - Plain white background
+   - Simple black text
+   - Light blue / blue buttons
+   - No fancy decorations, shadows, or gradients
+========================================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+  line-height: 1.6;
+  padding: 40px 20px;
+}
+
+/* Centered layout */
+.container {
+  max-width: 750px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Headings */
+h1 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #333333;
+  margin-bottom: 25px;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* Form */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+input[type="url"] {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #777777;
+  border-radius: 4px;
+  outline: none;
+}
+
+input[type="url"]:focus {
+  border-color: #0066cc;
+}
+
+/* Primary Button (Blue) */
+.btn-primary {
+  background-color: #0066cc;
+  color: #ffffff;
+  border: 1px solid #0052a3;
+  padding: 10px 24px;
+  font-size: 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0052a3;
+}
+
+.btn-primary:disabled {
+  background-color: #99c2eb;
+  border-color: #99c2eb;
+  cursor: not-allowed;
+}
+
+/* Error message banner */
+.error-box {
+  margin: 15px 0;
+  padding: 10px 15px;
+  background-color: #fdf2f2;
+  border: 1px solid #e0b4b4;
+  color: #9f3a38;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: left;
+}
+
+/* Generated Result Area */
+.result-area {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.result-label {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+#short-url-text {
+  font-family: monospace;
+  font-size: 16px;
+  color: #0066cc;
+  font-weight: bold;
+  word-break: break-all;
+}
+
+/* Security Status Badge */
+.security-status-badge {
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+.security-safe {
+  background-color: #e6f9ed;
+  color: #1e7e34;
+  border: 1px solid #c3e6cb;
+}
+
+.security-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+/* Small Button (Light Blue / Blue) */
+.btn-small,
+.table-copy-btn {
+  background-color: #e6f0fa;
+  color: #0052a3;
+  border: 1px solid #99c2eb;
+  padding: 5px 12px;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-small:hover,
+.table-copy-btn:hover {
+  background-color: #cce0f5;
+}
+
+/* Table */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+th, td {
+  border: 1px solid #dddddd;
+  padding: 10px 12px;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.table-short-link {
+  color: #0066cc;
+  text-decoration: none;
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.table-short-link:hover {
+  text-decoration: underline;
+}
+
+.table-long-link {
+  color: #333333;
+  display: inline-block;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.status-tag {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.status-tag.safe {
+  background-color: #e6f9ed;
+  color: #1e7e34;
+  border: 1px solid #c3e6cb;
+}
+
+.status-tag.warn {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+/* Utility to hide elements */
+.hidden {
+  display: none !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  body {
+    padding: 20px 12px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .table-long-link {
+    max-width: 110px;
+  }
+}

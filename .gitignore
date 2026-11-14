@@ -1,0 +1,12 @@
+# Firebase Credentials (NEVER upload to GitHub or public repositories!)
+firebase-key.json
+*.key.json
+serviceAccountKey.json
+.env
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
