@@ -22,7 +22,15 @@ INITIAL_SAMPLES = [
         "original_url": "https://en.wikipedia.org/wiki/URL_shortening",
         "clicks": 12,
         "is_suspicious": False,
-        "security_reason": "Safe & Verified",
+        "security_reason": "Passed all security filters (HTTPS, domain reputation, and pattern heuristics)",
+        "security_checks": [
+            {"name": "Protocol Encryption", "passed": True, "detail": "Uses secure HTTPS encryption (SSL/TLS)"},
+            {"name": "Hostname Validation", "passed": True, "detail": "Domain name 'en.wikipedia.org' appears well-formed"},
+            {"name": "URL Obfuscation", "passed": True, "detail": "No userinfo credentials or '@' obfuscation detected"},
+            {"name": "Phishing Keyword Analysis", "passed": True, "detail": "No common phishing, credential-theft, or giveaway keywords detected"},
+            {"name": "Domain Extension Reputation", "passed": True, "detail": "Domain extension is not listed on current high-risk watchlists"},
+            {"name": "Subdomain Depth", "passed": True, "detail": "Subdomain nesting depth is normal"}
+        ],
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")
     },
     {
@@ -30,7 +38,15 @@ INITIAL_SAMPLES = [
         "original_url": "https://docs.python.org/3/library/urllib.parse.html",
         "clicks": 5,
         "is_suspicious": False,
-        "security_reason": "Safe & Verified",
+        "security_reason": "Passed all security filters (HTTPS, domain reputation, and pattern heuristics)",
+        "security_checks": [
+            {"name": "Protocol Encryption", "passed": True, "detail": "Uses secure HTTPS encryption (SSL/TLS)"},
+            {"name": "Hostname Validation", "passed": True, "detail": "Domain name 'docs.python.org' appears well-formed"},
+            {"name": "URL Obfuscation", "passed": True, "detail": "No userinfo credentials or '@' obfuscation detected"},
+            {"name": "Phishing Keyword Analysis", "passed": True, "detail": "No common phishing, credential-theft, or giveaway keywords detected"},
+            {"name": "Domain Extension Reputation", "passed": True, "detail": "Domain extension is not listed on current high-risk watchlists"},
+            {"name": "Subdomain Depth", "passed": True, "detail": "Subdomain nesting depth is normal"}
+        ],
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")
     }
 ]
@@ -58,40 +74,142 @@ IPV4_REGEX = re.compile(r"^(\d{1,3}\.){3}\d{1,3}(:\d+)?$")
 
 def inspect_url_security(url: str):
     """
-    Analyzes submitted URL against common malicious patterns:
+    Analyzes submitted URL against multiple security checks:
     1. Direct raw IP addresses as hostnames
     2. High-risk top-level domains (.tk, .xyz, etc.)
     3. Phishing and credential-theft keywords
     4. Excessive subdomains / @ symbol obfuscation
-    Returns (is_suspicious: bool, reason: str)
+    5. Insecure protocol (plain HTTP vs HTTPS)
+    6. Suspicious port usage
+    
+    Returns:
+        is_suspicious (bool)
+        status_label (str)
+        reason (str)
+        security_checks (list[dict])
     """
     parsed = urlparse(url)
     hostname = (parsed.hostname or "").lower()
     full_url_lower = url.lower()
+    scheme = parsed.scheme.lower()
 
-    # Check 1: Userinfo / @ symbol in URL (often used to obscure destination)
-    if parsed.username or "@" in parsed.netloc:
-        return True, "Suspicious: Contains '@' symbol which can hide destination"
+    checks = []
+    suspicious_reasons = []
+
+    # Check 1: HTTPS protocol check
+    if scheme == "https":
+        checks.append({
+            "name": "Protocol Encryption",
+            "passed": True,
+            "detail": "Uses secure HTTPS encryption (SSL/TLS)"
+        })
+    else:
+        checks.append({
+            "name": "Protocol Encryption",
+            "passed": False,
+            "detail": "Uses unencrypted HTTP protocol; data is transmitted in plain text"
+        })
+        suspicious_reasons.append("Unencrypted connection (HTTP instead of HTTPS)")
 
     # Check 2: Direct raw IP address host
-    if IPV4_REGEX.match(parsed.netloc):
-        return True, "Warning: Hostname is a raw IP address"
+    has_raw_ip = bool(IPV4_REGEX.match(parsed.netloc.split(":")[0]))
+    if has_raw_ip:
+        checks.append({
+            "name": "Hostname Validation",
+            "passed": False,
+            "detail": "Hostname is a raw IP address, frequently used to bypass domain reputation checks"
+        })
+        suspicious_reasons.append("Hostname is a direct raw IP address")
+    else:
+        checks.append({
+            "name": "Hostname Validation",
+            "passed": True,
+            "detail": f"Domain name '{hostname}' appears well-formed"
+        })
 
-    # Check 3: Known phishing/credential scam keywords
-    for keyword in SUSPICIOUS_KEYWORDS:
-        if keyword in full_url_lower:
-            return True, f"High risk: Contains phishing pattern '{keyword}'"
+    # Check 3: Userinfo / @ symbol in URL
+    has_at_symbol = parsed.username or "@" in parsed.netloc
+    if has_at_symbol:
+        checks.append({
+            "name": "URL Obfuscation",
+            "passed": False,
+            "detail": "Contains '@' symbol which can conceal the actual server destination"
+        })
+        suspicious_reasons.append("Contains '@' symbol which can hide the real destination")
+    else:
+        checks.append({
+            "name": "URL Obfuscation",
+            "passed": True,
+            "detail": "No userinfo credentials or '@' obfuscation detected"
+        })
 
-    # Check 4: Suspicious TLD check
-    for tld in SUSPICIOUS_TLDS:
-        if hostname.endswith(tld):
-            return True, f"Caution: Registered on high-risk domain extension '{tld}'"
+    # Check 4: Phishing keywords check
+    found_keywords = [kw for kw in SUSPICIOUS_KEYWORDS if kw in full_url_lower]
+    if found_keywords:
+        matched_str = ", ".join(found_keywords)
+        checks.append({
+            "name": "Phishing Keyword Analysis",
+            "passed": False,
+            "detail": f"Contains pattern(s) frequently associated with credential harvesting/scams: {matched_str}"
+        })
+        suspicious_reasons.append(f"Flagged phishing pattern '{matched_str}'")
+    else:
+        checks.append({
+            "name": "Phishing Keyword Analysis",
+            "passed": True,
+            "detail": "No common phishing, credential-theft, or giveaway keywords detected"
+        })
 
-    # Check 5: Excessive subdomains (> 4 dots)
+    # Check 5: Suspicious TLD check
+    flagged_tld = next((tld for tld in SUSPICIOUS_TLDS if hostname.endswith(tld)), None)
+    if flagged_tld:
+        checks.append({
+            "name": "Domain Extension Reputation",
+            "passed": False,
+            "detail": f"Registered under '{flagged_tld}', which has high abuse rates in fast-flux spam/phishing"
+        })
+        suspicious_reasons.append(f"High-risk domain extension '{flagged_tld}'")
+    else:
+        checks.append({
+            "name": "Domain Extension Reputation",
+            "passed": True,
+            "detail": "Domain extension is not listed on current high-risk watchlists"
+        })
+
+    # Check 6: Excessive subdomains (> 4 dots)
     if hostname.count(".") > 4:
-        return True, "Suspicious: Unusually excessive subdomain nesting"
+        checks.append({
+            "name": "Subdomain Depth",
+            "passed": False,
+            "detail": f"Unusually deep subdomain nesting ({hostname.count('.')} levels), commonly seen in disguised phishing URLs"
+        })
+        suspicious_reasons.append("Excessive subdomain nesting")
+    else:
+        checks.append({
+            "name": "Subdomain Depth",
+            "passed": True,
+            "detail": "Subdomain nesting depth is normal"
+        })
 
-    return False, "Safe & Verified"
+    # Check 7: Suspicious Port check
+    if parsed.port and parsed.port not in [80, 443, 8080]:
+        checks.append({
+            "name": "Port Verification",
+            "passed": False,
+            "detail": f"Non-standard web port :{parsed.port} detected"
+        })
+        suspicious_reasons.append(f"Connects to unusual port :{parsed.port}")
+
+    # Determine overall status
+    is_suspicious = len(suspicious_reasons) > 0
+    if is_suspicious:
+        summary_reason = "; ".join(suspicious_reasons)
+        status_label = "Suspicious"
+    else:
+        summary_reason = "Passed all security filters (HTTPS, domain reputation, and pattern heuristics)"
+        status_label = "Safe"
+
+    return is_suspicious, summary_reason, checks
 
 
 def is_valid_url(url: str) -> bool:
@@ -171,6 +289,10 @@ def shorten_url():
 
     raw_url = str(data["url"]).strip()
 
+    # Auto-prepend https:// if protocol was omitted
+    if not raw_url.startswith("http://") and not raw_url.startswith("https://"):
+        raw_url = "https://" + raw_url
+
     # Step 1: Validate scheme and format
     if not is_valid_url(raw_url):
         return jsonify({
@@ -179,7 +301,7 @@ def shorten_url():
         }), 400
 
     # Step 2: Check for malicious / suspicious patterns
-    is_suspicious, security_reason = inspect_url_security(raw_url)
+    is_suspicious, security_reason, security_checks = inspect_url_security(raw_url)
 
     # Step 3: Check if this URL was already shortened (optional reuse)
     for code, item in links_db.items():
@@ -193,6 +315,7 @@ def shorten_url():
                 "clicks": item["clicks"],
                 "is_suspicious": item["is_suspicious"],
                 "security_reason": item["security_reason"],
+                "security_checks": item.get("security_checks", []),
                 "message": "Existing link retrieved"
             }), 200
 
@@ -206,6 +329,7 @@ def shorten_url():
         "clicks": 0,
         "is_suspicious": is_suspicious,
         "security_reason": security_reason,
+        "security_checks": security_checks,
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")
     }
     links_db[short_code] = link_entry
@@ -217,7 +341,8 @@ def shorten_url():
         "original_url": raw_url,
         "clicks": 0,
         "is_suspicious": is_suspicious,
-        "security_reason": security_reason
+        "security_reason": security_reason,
+        "security_checks": security_checks
     }), 201
 
 
@@ -237,6 +362,7 @@ def get_all_links():
             "clicks": item["clicks"],
             "is_suspicious": item["is_suspicious"],
             "security_reason": item["security_reason"],
+            "security_checks": item.get("security_checks", []),
             "created_at": item.get("created_at", "")
         })
 

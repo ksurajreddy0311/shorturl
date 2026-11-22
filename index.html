@@ -3,62 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure URL Shortener</title>
+  <title>CypherLink - Secure URL Shortener & Inspector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <div class="container">
     <!-- Header -->
-    <h1>Secure URL Shortener</h1>
-    <p class="subtitle">Enter your long URL to shorten it.</p>
+    <header class="header">
+      <h1>URL Shortener</h1>
+      <p class="subtitle">Paste your link to shorten it and track clicks.</p>
+    </header>
 
-    <!-- Shortener Form -->
-    <form id="shortener-form">
-      <input 
-        type="url" 
-        id="long-url" 
-        placeholder="https://example.com/my-long-url" 
-        required
-      >
-      <button type="submit" id="shorten-btn" class="btn-primary">Shorten URL</button>
-    </form>
+    <!-- Main Card -->
+    <div class="card shortener-card">
+      <form id="shortener-form">
+        <div class="input-wrapper">
+          <span class="input-icon">🔗</span>
+          <input 
+            type="text" 
+            id="long-url" 
+            placeholder="Paste your link here (e.g. https://example.com/...)" 
+            required
+            autocomplete="off"
+          >
+          <button type="submit" id="shorten-btn" class="btn-primary">
+            <span>Shorten Link</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+      </form>
 
-    <!-- Error message banner (hidden by default) -->
-    <div id="error-box" class="error-box hidden"></div>
+      <!-- Error message banner -->
+      <div id="error-box" class="error-box hidden" role="alert"></div>
 
-    <!-- Generated Short URL Display (hidden initially, shown on submit) -->
-    <div id="result-box" class="result-area hidden">
-      <p class="result-label">Generated Short URL:</p>
-      <div class="result-row">
-        <span id="short-url-text"></span>
-        <button type="button" id="copy-btn" class="btn-small">
-          <span id="copy-icon"></span>
-          <span id="copy-text">Copy</span>
-        </button>
+      <!-- Generated Short URL & Inspection Display -->
+      <div id="result-box" class="result-box hidden">
+        <div class="result-input-group">
+          <span id="short-url-text" class="short-url-text"></span>
+          <button type="button" id="copy-btn" class="btn-action">
+            <span id="copy-icon">📋</span>
+            <span id="copy-text">Copy</span>
+          </button>
+        </div>
+
+        <div class="result-status-row">
+          <span id="result-status-badge" class="badge"></span>
+          <span id="security-reason-text" class="sec-reason"></span>
+          <button type="button" id="toggle-audit-btn" class="btn-toggle-audit" onclick="toggleAuditDetails()">
+            <span id="audit-toggle-text">Details</span>
+            <span id="audit-toggle-icon">▼</span>
+          </button>
+        </div>
+
+        <!-- Collapsible Security Inspection Checks List -->
+        <div class="audit-list hidden" id="audit-list"></div>
       </div>
-      <!-- Security Status Feedback -->
-      <div id="security-status-box" class="security-status-badge"></div>
     </div>
 
     <!-- Recent Links Section -->
-    <h2>Recent Links</h2>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Original URL</th>
-            <th>Short URL</th>
-            <th>Security Status</th>
-            <th>Clicks</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="links-table-body">
-          <!-- Populated from backend via script.js -->
-        </tbody>
-      </table>
+    <section class="recent-section">
+      <div class="section-header">
+        <h2>Recent Links</h2>
+        <button class="btn-ghost" onclick="fetchRecentLinks()">
+          ↻ Refresh
+        </button>
+      </div>
+
+      <div class="table-card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Original URL</th>
+                <th>Short URL</th>
+                <th>Status</th>
+                <th>Clicks</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="links-table-body">
+              <!-- Dynamically populated from backend -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Inspection Modal for Details -->
+    <div id="inspect-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-backdrop" onclick="closeInspectModal()"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span id="modal-icon">🛡️</span>
+            <div>
+              <h3 id="modal-title">URL Security Breakdown</h3>
+              <p id="modal-url" class="modal-sub"></p>
+            </div>
+          </div>
+          <button class="modal-close" onclick="closeInspectModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="modal-summary" class="modal-summary"></div>
+          <h4 class="modal-checks-heading">Heuristic & Protocol Checks:</h4>
+          <div id="modal-checks-list" class="audit-list"></div>
+        </div>
+      </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>CypherLink &bull; URL Shortener</p>
+    </footer>
   </div>
 
   <script src="script.js"></script>
